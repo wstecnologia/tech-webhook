@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/server.ts",
     "build": "tsc -p tsconfig.build.json",
     "debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
