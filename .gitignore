@@ -3,6 +3,7 @@
 /build
 /node_modules
 data/
+.vscode
 # Logs
 logs
 *.log
