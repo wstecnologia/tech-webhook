@@ -20,7 +20,8 @@ app.post("/webhook/payment", async (req: Request, res: Response) => {
 
   // criar o timer sleep.
   try {
-    await axios.post(`${host}`, result)
+    await axios.put(`${host}`, result)
+
     res.status(200).send("Pagamento recebido e status enviado")
   } catch (error) {
     res.status(500).send("Erro ao processar pagamento")
