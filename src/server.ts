@@ -1,11 +1,14 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import express, { Request, Response } from "express"
+import swaggerUi from "swagger-ui-express"
+import swaggerSpec from "../Swagger"
 dotenv.config()
 
 const app = express()
 
 app.use(express.json())
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 const PORT = process.env.PORT || 3001
 const host = process.env.HOST
@@ -18,13 +21,18 @@ app.post("/webhook/payment", async (req: Request, res: Response) => {
     status: "Completed",
   }
 
-  // criar o timer sleep.
   try {
-    await axios.put(`${host}`, result)
+    const options = {
+      method: "PUT",
+      url: host,
+      params: result,
+    }
 
-    res.status(200).send("Pagamento recebido e status enviado")
+    await axios.request(options)
+
+    res.status(200).json("Pagamento recebido e status enviado")
   } catch (error) {
-    res.status(500).send("Erro ao processar pagamento")
+    res.status(500).json("Erro ao processar pagamento")
   }
 })
 
