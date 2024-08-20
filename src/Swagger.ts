@@ -10,7 +10,7 @@ const options = {
 
     paths: {
       "/webhook/payment": {
-        post: {
+        put: {
           tags: ["Payment"],
           summary: "Update Status Payment",
           requestBody: {
