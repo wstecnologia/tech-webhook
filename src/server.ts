@@ -2,7 +2,8 @@ import axios from "axios"
 import dotenv from "dotenv"
 import express, { Request, Response } from "express"
 import swaggerUi from "swagger-ui-express"
-import swaggerSpec from "../Swagger"
+import swaggerSpec from "./Swagger"
+
 dotenv.config()
 
 const app = express()
@@ -13,7 +14,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 const PORT = process.env.PORT || 3001
 const host = process.env.HOST
 
-app.post("/webhook/payment", async (req: Request, res: Response) => {
+app.put("/webhook/payment", async (req: Request, res: Response) => {
   const { paymentId } = req.body
 
   const result = {
@@ -32,7 +33,7 @@ app.post("/webhook/payment", async (req: Request, res: Response) => {
 
     res.status(200).json("Pagamento recebido e status enviado")
   } catch (error) {
-    res.status(500).json("Erro ao processar pagamento")
+    res.status(500).json(`Erro ao processar pagamento: ${error}`)
   }
 })
 
