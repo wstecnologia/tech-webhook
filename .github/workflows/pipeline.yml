@@ -1,21 +1,23 @@
 name: Build and Deploy Webhook
 
 on:
+
   push:
     branches:
       - master
       - develop
+
+
   pull_request:
     branches:
       - master
-      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-
+    # Checkout do código
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -23,33 +25,53 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-
+    
     - name: Install dependencies
       run: npm install
 
+    
     - name: Build Docker image
       run: |
-        docker build -t wstecnologia/tech-webhook:latest .
-
+        docker-compose -f docker-compose.yaml build
+    
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-
-    # Push da imagem para o Docker Hub
-    - name: Push Docker image
+    
+    - name: Push Docker image to Docker Hub
       run: |
-        docker push wstecnologia/tech-webhook:latest
+        docker-compose -f docker-compose.yaml push
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
-    steps:    
+    steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Install Docker and Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker.io
+        sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+
+
+    - name: Verify Docker and Docker Compose
+      run: |
+        docker --version
+        docker-compose --version
+
+
     - name: Deploy with Docker Compose
       run: |
-        docker-compose up -d
+        docker-compose -f docker-compose.yaml up -d
+
+
+    - name: Wait for the webhook service to be available
+      run: |
+        sleep 10  # Aguardar alguns segundos para garantir que o serviço esteja disponível
+        curl -f http://localhost:3001 || exit 1  # Verificar se o serviço está rodando, se necessário
