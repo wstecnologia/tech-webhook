@@ -7,12 +7,11 @@ const options = {
       title: "Techchalleger - Documentation WebHook",
       version: "1.0.0",
     },
-
     paths: {
-      "/webhook/payment": {
+      "/payment-status": {
         put: {
           tags: ["Payment"],
-          summary: "Update Status Payment",
+          summary: "Update Payment Status",
           requestBody: {
             content: {
               "application/json": {
@@ -21,36 +20,52 @@ const options = {
                   properties: {
                     paymentId: {
                       type: "string",
-                      required: true,
+                      description: "Unique identifier of the payment",
+                      example: "8a108dc0-dd5c-4559-8cd4-682b74ed4fd9",
+                    },
+                    status: {
+                      type: "string",
+                      description: "New status of the payment",
+                      example: "Completed",
+                      enum: ["Pending", "Completed", "Failed", "Refunded"], // Ajuste conforme os valores permitidos
                     },
                   },
+                  required: ["paymentId", "status"],
                 },
               },
             },
           },
           responses: {
             200: {
-              description: "Success",
-            },
-            201: {
-              description: "Created",
+              description: "Payment status updated successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean" },
+                      paymentId: { type: "string" },
+                      status: { type: "string" },
+                    },
+                  },
+                },
+              },
             },
             400: {
-              description: "Invalid Request",
+              description: "Invalid request (e.g., missing or invalid fields)",
             },
-            401: {
-              description: "Invalid Access",
+            404: {
+              description: "Payment not found",
             },
             500: {
-              description: "Internal Server Error",
+              description: "Internal server error",
             },
           },
         },
       },
     },
   },
-
-  apis: [],
+  apis: [], // Adicione caminhos para arquivos de rotas, se necessário (ex.: ["./routes/*.ts"])
 }
 
 const swaggerSpec = swaggerJsdoc(options)
