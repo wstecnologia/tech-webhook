@@ -8,7 +8,7 @@ const options = {
       version: "1.0.0",
     },
     paths: {
-      "/payment-status": {
+      "/webhook/payment": {
         put: {
           tags: ["Payment"],
           summary: "Update Payment Status",
